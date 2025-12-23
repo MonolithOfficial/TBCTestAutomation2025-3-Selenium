@@ -1,4 +1,4 @@
-package ge.tbc.testautomation.gettingstarted;
+package ge.tbc.testautomation.ExceptionsJS;
 
 import ge.tbc.testautomation.data.Constants;
 import org.openqa.selenium.By;
@@ -6,9 +6,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -17,27 +20,34 @@ import java.util.Map;
 import static ge.tbc.testautomation.data.Constants.*;
 
 @Test(groups = {"E2E - successful product purchase - SCRUM-T18"})
-public class SuccessfulPurchaseScenarioTest {
+public class SuccessfulPurchaseScenarioCrossBrowserTest {
     WebDriver driver;
 
     @BeforeClass
-    public void setUp(){
-        ChromeOptions options = new ChromeOptions()
-                .setExperimentalOption(
-                        "prefs",
-                        Map.of(
-                                "credentials_enable_service", false,
-                                "profile.password_manager_enabled", false
-                        )
-                );
-
-        driver = new ChromeDriver(options);
+    @Parameters("browserType")
+    public void setUp(String browserType) {
+        if (browserType.equalsIgnoreCase("chrome")) {
+            ChromeOptions options = new ChromeOptions()
+                    .setExperimentalOption(
+                            "prefs",
+                            Map.of(
+                                    "credentials_enable_service", false,
+                                    "profile.password_manager_enabled", false
+                            )
+                    );
+            driver = new ChromeDriver(options);
+        } else if (browserType.equalsIgnoreCase("firefox")) {
+            FirefoxOptions options = new FirefoxOptions()
+                    .addPreference("credentials_enable_service", false)
+                    .addPreference("profile.password_manager_enabled", false);
+            driver = new FirefoxDriver(options);
+        }
         driver.manage().window().maximize();
         driver.get("https://www.saucedemo.com/");
     }
 
     @Test(description = "Login as standard user", priority = 1)
-    public void loginAsStandardUser(){
+    public void loginAsStandardUser() {
         WebElement usernameInput = driver.findElement(By.id("user-name"));
         usernameInput.sendKeys(Constants.STANDARD_USER);
 
@@ -49,7 +59,7 @@ public class SuccessfulPurchaseScenarioTest {
     }
 
     @Test(description = "Add backpack to cart", priority = 2)
-    public void addToCart(){
+    public void addToCart() {
         WebElement addToCartButton = driver.findElement(By.xpath("//div[text()='Sauce Labs Backpack']//following::button[1]"));
         addToCartButton.click();
 
@@ -59,7 +69,7 @@ public class SuccessfulPurchaseScenarioTest {
     }
 
     @Test(description = "Review the cart", priority = 3)
-    public void reviewCart(){
+    public void reviewCart() {
         WebElement cartIcon = driver.findElement(By.cssSelector("a.shopping_cart_link"));
         cartIcon.click();
 
@@ -68,7 +78,7 @@ public class SuccessfulPurchaseScenarioTest {
     }
 
     @Test(description = "Go to checkout page", priority = 4)
-    public void goToCheckout(){
+    public void goToCheckout() {
         WebElement checkoutButton = driver.findElement(By.id("checkout"));
         checkoutButton.click();
 
@@ -106,7 +116,7 @@ public class SuccessfulPurchaseScenarioTest {
     }
 
     @AfterClass
-    public void tearDown(){
+    public void tearDown() {
         driver.quit();
     }
 }

@@ -1,10 +1,13 @@
-package ge.tbc.testautomation.waitsFormsFrames;
+package ge.tbc.testautomation.waitsFormsFramesTables;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -65,6 +68,25 @@ public class WaitsTest {
         });
         Assert.assertTrue(isInputEnabled);
         input.sendKeys("SOMETHING");
+    }
+
+    // fluent wait example
+    @Test
+    public void testFluentWait() {
+        driver.get("http://the-internet.herokuapp.com/dynamic_controls");
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofMillis(100)) // POLLING MECHANISM
+                .ignoring(NoSuchElementException.class);
+
+        WebElement enableButton =
+                driver.findElement(
+                        By.xpath("//form[@id='input-example']/button[@type='button'"));
+        enableButton.click();
+
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("message")));
+        WebElement message = driver.findElement(By.id("message"));
+        message.click();
     }
 
     @AfterClass

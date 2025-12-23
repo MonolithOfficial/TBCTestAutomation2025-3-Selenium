@@ -1,4 +1,4 @@
-package ge.tbc.testautomation.waitsFormsFrames;
+package ge.tbc.testautomation.waitsFormsFramesTables;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
